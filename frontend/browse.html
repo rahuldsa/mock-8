@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h1 {
+        text-align: center;
+      }
+      #filter-bar {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+      #classifieds-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+      .card {
+        width: 200px;
+        border: 1px solid #ccc;
+        padding: 10px;
+      }
+      .card img {
+        max-width: 100%;
+      }
+      #pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+      }
+      .pagination-button {
+        margin: 0 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>OLX Classifieds</h1>
+      <div id="filter-bar">
+        <select id="category-filter">
+          <option value="">All Categories</option>
+          <option value="Clothing">Clothing</option>
+          <option value="Electronics">Electronics</option>
+          <option value="Furniture">Furniture</option>
+          <option value="Other">Other</option>
+        </select>
+        <input
+          type="text"
+          id="search-input"
+          placeholder="Search by product name"
+        />
+      </div>
+      <div id="classifieds-list"></div>
+      <div id="pagination"></div>
+      <div id="append"></div>
+    </div>
+  </body>
+</html>
+
+<script>
+  async function getdata() {
+    try {
+      let res = await fetch("http://localhost:4500/classifieds");
+      let data = await res.json();
+      bag = [...data.posts];
+      filterData = [...data.posts];
+      displayData(data.posts);
+    } catch (error) {
+      alert("something went wrong");
+      console.log(error);
+    }
+  }
+  getdata();
+
+  function displayData(data) {
+    append.innerHTML = "";
+    console.log(data);
+    data.forEach((el) => {
+      append.innerHTML += `
+            <div class="card">
+                <img src=${el.img} alt="Image">
+                <div class="card_data">
+                    <h1>${el.name}</h1>
+                    <p><b>Category:</b> ${el.category}</p>
+                    <p><b>Description:</b> ${el.description}</p>
+                    <p><b>Posted At:</b> $${el.postedAt}</p>
+                    <p><b>Booking Status:</b> ${el.isBooked}</p>
+                    <div class="card_buttons">
+                        <button class="purple" onclick=editData(${
+                          el.id
+                        })>Edit</button>
+                        <button class="red" onclick=deleteData(${
+                          el.id
+                        })>Delete</button>
+                        <button class=${
+                          el.isBooked ? "grey" : "green"
+                        } onclick=hireData(${el.id}) ${
+        el.isBooked ? "disabled" : null
+      }> Me</button>
+                    </div>
+                </div>
+            </div>        
+        `;
+    });
+  }
+  displayData();
+</script>
